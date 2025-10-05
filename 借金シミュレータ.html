@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>借金計算シミュレーター</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px 0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .results p {
+            font-size: 18px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        .results p span {
+            font-weight: bold;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>借金計算シミュレーター</h1>
+        
+        <div class="input-group">
+            <label for="principal">利息のかかる元本 (円)</label>
+            <input type="number" id="principal" value="2000">
+        </div>
+
+        <div class="input-group">
+            <label for="interestFreePrincipal">無利息の元本 (円)</label>
+            <input type="number" id="interestFreePrincipal" value="2000">
+        </div>
+        
+        <div class="input-group">
+            <label for="interestRate">年利 (%)</label>
+            <input type="number" id="interestRate" value="109.5">
+        </div>
+
+        <div class="input-group">
+            <label for="startDate">借入日</label>
+            <input type="date" id="startDate" value="2024-06-21">
+        </div>
+
+        <div class="input-group">
+            <label for="calcDate">計算したい日</label>
+            <input type="date" id="calcDate">
+        </div>
+
+        <button onclick="calculateDebt()">計算する</button>
+
+        <div id="results" class="results" style="display: none;">
+            <p>経過日数: <span id="elapsedDays"></span></p>
+            <p>合計元本: <span id="totalPrincipal"></span></p>
+            <p>利息合計: <span id="totalInterest"></span></p>
+            <p>支払うべき総額: <span id="totalAmount" style="font-size: 22px; color: #d9534f;"></span></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calcDate').valueAsDate = new Date();
+
+        function calculateDebt() {
+            const principal = parseFloat(document.getElementById('principal').value) || 0;
+            const interestFreePrincipal = parseFloat(document.getElementById('interestFreePrincipal').value) || 0;
+            const annualRate = parseFloat(document.getElementById('interestRate').value);
+            const startDate = new Date(document.getElementById('startDate').value);
+            const calcDate = new Date(document.getElementById('calcDate').value);
+
+            if (isNaN(principal) || isNaN(interestFreePrincipal) || isNaN(annualRate) || !startDate.getTime() || !calcDate.getTime()) {
+                alert("すべての項目を正しく入力してください。");
+                return;
+            }
+            if (calcDate < startDate) {
+                alert("計算日は借入日より後の日付にしてください。");
+                return;
+            }
+
+            const timeDiff = calcDate.getTime() - startDate.getTime();
+            const elapsedDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+            const dailyRate = annualRate / 100 / 365;
+            const totalInterest = Math.round(principal * dailyRate * elapsedDays);
+
+            const totalPrincipal = principal + interestFreePrincipal;
+            const totalAmount = totalPrincipal + totalInterest;
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('elapsedDays').innerText = `${elapsedDays.toLocaleString()} 日`;
+            document.getElementById('totalPrincipal').innerText = `¥ ${totalPrincipal.toLocaleString()}`;
+            document.getElementById('totalInterest').innerText = `¥ ${totalInterest.toLocaleString()}`;
+            document.getElementById('totalAmount').innerText = `¥ ${totalAmount.toLocaleString()}`;
+        }
+    </script>
+</body>
+</html>
