@@ -6,14 +6,15 @@
     <title>借金計算シミュレーター</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             background-color: #f0f2f5;
             margin: 0;
-            padding: 20px 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .container {
             background-color: white;
@@ -27,6 +28,7 @@
             text-align: center;
             color: #333;
             margin-bottom: 25px;
+            font-size: 24px;
         }
         .input-group {
             margin-bottom: 15px;
@@ -37,22 +39,19 @@
             color: #555;
             font-weight: bold;
         }
-        input[type="number"], input[type="date"] {
+        input[type="number"], input[type="date"], button {
+            font-size: 16px;
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
         }
         button {
-            width: 100%;
-            padding: 12px;
             margin-top: 10px;
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
@@ -83,17 +82,17 @@
         
         <div class="input-group">
             <label for="principal">利息のかかる元本 (円)</label>
-            <input type="number" id="principal" value="2000">
+            <input type="number" id="principal" value="2000" inputmode="numeric">
         </div>
 
         <div class="input-group">
             <label for="interestFreePrincipal">無利息の元本 (円)</label>
-            <input type="number" id="interestFreePrincipal" value="2000">
+            <input type="number" id="interestFreePrincipal" value="2000" inputmode="numeric">
         </div>
         
         <div class="input-group">
             <label for="interestRate">年利 (%)</label>
-            <input type="number" id="interestRate" value="109.5">
+            <input type="number" id="interestRate" value="109.5" inputmode="numeric">
         </div>
 
         <div class="input-group">
@@ -117,7 +116,10 @@
     </div>
 
     <script>
-        document.getElementById('calcDate').valueAsDate = new Date();
+        // ▼▼▼【改良点】ページが読み込まれた時に、必ず今日の日付をセットする ▼▼▼
+        window.onload = function() {
+            document.getElementById('calcDate').valueAsDate = new Date();
+        };
 
         function calculateDebt() {
             const principal = parseFloat(document.getElementById('principal').value) || 0;
